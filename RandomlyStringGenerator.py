@@ -6,6 +6,7 @@
 # @Software: PyCharm
 
 import random
+import threading
 from tkinter import *
 
 
@@ -79,6 +80,8 @@ def alpha_check_change():  # {
 # }
 
 def generate_tap():  # {
+
+
     len_state = True if len_check_state.get() == 1 else False
     alpha_state = True if alpha_check_state.get() == 1 else False
     upper_state = True if upper_check_state.get() == 1 else False
@@ -101,8 +104,12 @@ def generate_tap():  # {
     hint_string_var.set(ret)
     text_entry.config(state=NORMAL)
 
-
 # }
+
+def thread_it(func, *args):
+    t = threading.Thread(target=func,args=args)
+    t.setDaemon(True)
+    t.start()
 
 def exit_tap():  # {
     root_windows.destroy()
@@ -134,7 +141,7 @@ len_input_text = StringVar()
 
 len_check_label = Label(check_area, text="setlen")
 len_check_label.grid(row=0, column=0, sticky=W)
-len_check_entry = Checkbutton(check_area, justify=CENTER, variable=len_check_state, command=len_check_change)
+len_check_entry = Checkbutton(check_area, justify=CENTER, variable=len_check_state, command=lambda :thread_it(len_check_change))
 len_check_entry.grid(row=0, column=1, sticky=W)
 
 len_input_label = Label(check_area, text="length")
@@ -144,7 +151,7 @@ len_input_entry.grid(row=0, column=4, sticky=W)
 
 alpha_check_label = Label(check_area, text="alpha")
 alpha_check_label.grid(row=1, column=0, sticky=W)
-alpha_check_entry = Checkbutton(check_area, justify=CENTER, variable=alpha_check_state, command=alpha_check_change)
+alpha_check_entry = Checkbutton(check_area, justify=CENTER, variable=alpha_check_state, command=lambda :thread_it(alpha_check_change))
 alpha_check_entry.grid(row=1, column=1, sticky=W)
 
 upper_check_label = Label(check_area, text="upper")
@@ -173,8 +180,8 @@ check_area.columnconfigure(2, weight=1)
 check_area.columnconfigure(3, weight=1)
 check_area.columnconfigure(4, weight=1)
 
-generate_button = Button(button_area, text="Generate", command=generate_tap)
-exit_button = Button(button_area, text="Exit", command=exit_tap)
+generate_button = Button(button_area, text="Generate", command=lambda :thread_it(generate_tap))
+exit_button = Button(button_area, text="Exit", command=lambda :thread_it(exit_tap))
 
 text_area.pack(fill=X)
 text_entry.pack(fill=X)
